@@ -1,5 +1,4 @@
-﻿# contractorManagementSystem
-# Contractor Management System
+﻿# Contractor Management System
 
 Веб-приложение для управления заявками на выполнение работ, взаимодействия заказчиков и исполнителей, а также контроля процесса выполнения заказов.
 
