@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Управление тарифами</title>
+</head>
+
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-4">
+
+    <div class="mb-4">
+        <h1 class="h3 mb-1">Управление тарифами</h1>
+        <p class="text-muted mb-0">
+            Устанавливайте индивидуальные ставки для организаций.
+        </p>
+    </div>
+
+    <!-- Сообщения -->
+    <div class="alert alert-success"
+         th:if="${successMessage}"
+         th:text="${successMessage}">
+    </div>
+
+    <div class="alert alert-danger"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}">
+    </div>
+
+    <!-- Поиск по адресу -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+
+            <form method="get" th:action="@{/client-org/tariffs}">
+                <label class="form-label fw-semibold" for="address">
+                    Поиск организации по адресу
+                </label>
+
+                <div class="input-group">
+                    <input class="form-control"
+                           id="address"
+                           name="address"
+                           placeholder="Введите улицу, город или часть адреса"
+                           th:value="${address}"
+                           type="text">
+
+                    <button class="btn btn-primary" type="submit">
+                        Найти
+                    </button>
+
+                    <a class="btn btn-outline-secondary"
+                       th:href="@{/client-org/tariffs}">
+                        Сбросить
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Нет организаций -->
+    <div class="card border-0 shadow-sm"
+         th:if="${#lists.isEmpty(organizations)}">
+        <div class="card-body text-center py-5">
+            <h2 class="h5">Организации не найдены</h2>
+            <p class="text-muted mb-0">
+                Проверьте адрес или попробуйте другой запрос.
+            </p>
+        </div>
+    </div>
+
+    <!-- Список организаций -->
+    <div class="row g-4"
+         th:unless="${#lists.isEmpty(organizations)}">
+
+        <div class="col-12"
+             th:each="org : ${organizations}">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <h2 class="h5 mb-1"
+                            th:text="${org.name}">
+                            Название магазина
+                        </h2>
+
+                        <div class="text-muted">
+                            <span th:text="${org.address}">
+                                Адрес организации
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-top pt-3">
+
+                        <form method="post"
+                              th:action="@{/client-org/tariffs/{id}/rate(id=${org.id})}">
+
+                            <!-- Сохраняем поисковый запрос после изменения -->
+                            <input name="address"
+                                   th:value="${address}"
+                                   type="hidden">
+
+                            <div class="row g-3 align-items-end">
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label"
+                                           th:for="${'rate-' + org.id}">
+                                        Почасовая ставка (€)
+                                    </label>
+
+                                    <input class="form-control"
+                                           min="0.01"
+                                           name="rate"
+                                           required
+                                           step="0.01"
+                                           th:id="${'rate-' + org.id}"
+                                           th:value="${org.rate}"
+                                           type="number">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <button class="btn btn-primary w-100"
+                                            type="submit">
+                                        Сохранить ставку
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

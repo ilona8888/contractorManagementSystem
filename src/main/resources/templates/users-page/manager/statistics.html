@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Статистика заявок</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">Статистика заявок</h1>
+
+        <a class="btn btn-outline-primary"
+           th:href="@{/requests/full-requests}">
+            Назад к заявкам
+        </a>
+    </div>
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(statistics)}">
+        Организации пока отсутствуют.
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-12 col-md-6 col-xl-4"
+             th:each="org, iter : ${statistics}">
+
+            <div class="card h-100 shadow-sm">
+
+                <div class="card-header bg-white">
+                    <h2 class="h5 mb-0"
+                        th:text="${org.organizationName}">
+                        Название организации
+                    </h2>
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-secondary mb-3">
+                        <span class="fw-semibold">Адрес:</span>
+                        <span th:text="${org.address ?: 'Не указан'}">
+                            Адрес организации
+                        </span>
+                    </p>
+
+                    <div class="row g-2 mb-3">
+
+                        <div class="col-12">
+                            <div class="p-3 rounded bg-light">
+                                <div class="text-secondary small">
+                                    Всего заявок
+                                </div>
+                                <div class="fs-4 fw-bold"
+                                     th:text="${org.totalRequests()}">
+                                    0
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-success-subtle">
+                                <div class="small">Закрытые</div>
+                                <div class="fs-5 fw-bold text-success"
+                                     th:text="${org.closedRequests}">
+                                    0
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-warning-subtle">
+                                <div class="small">Не закрытые</div>
+                                <div class="fs-5 fw-bold text-warning-emphasis"
+                                     th:text="${org.notClosedRequests}">
+                                    0
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mx-auto" style="max-width: 300px;">
+                        <canvas th:attr="data-closed=${org.closedRequests},
+                                         data-not-closed=${org.notClosedRequests}"
+                                th:id="${'chart-' + iter.index}">
+                        </canvas>
+                    </div>
+
+                    <div class="text-center text-secondary small mt-2"
+                         th:if="${org.totalRequests() == 0}">
+                        Заявок пока нет
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    document.querySelectorAll('canvas[id^="chart-"]').forEach(canvas => {
+        const closed = Number(canvas.dataset.closed);
+        const notClosed = Number(canvas.dataset.notClosed);
+
+        new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Закрытые', 'Не закрытые'],
+                datasets: [{
+                    data: [closed, notClosed],
+                    backgroundColor: ['#198754', '#ffc107'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

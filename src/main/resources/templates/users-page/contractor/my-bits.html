@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Мои отклики</title>
+</head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-5">
+
+    <div class="alert alert-success"
+         role="alert"
+         th:if="${successMessage}"
+         th:text="${successMessage}">
+    </div>
+
+    <div class="alert alert-warning"
+         role="alert"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}">
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">Мои отклики</h1>
+            <p class="text-secondary mb-0">
+                Здесь отображаются все заявки, на которые вы откликнулись.
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(bids)}">
+        Вы пока не откликались на заявки.
+        Перейдите в раздел «Доступные заявки», чтобы найти смену.
+    </div>
+
+    <div class="row g-4" th:unless="${#lists.isEmpty(bids)}">
+
+        <div class="col-12 col-md-6 col-xl-4"
+             th:each="bid : ${bids}">
+
+            <div class="card h-100 border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <!-- Должность и статус отклика -->
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+
+                        <h2 class="h5 mb-0"
+                            th:text="${bid.positionName}">
+                            Название должности
+                        </h2>
+
+                        <span class="badge text-bg-warning"
+                              th:if="${bid.status.name() == 'PENDING'}">
+                            На рассмотрении
+                        </span>
+
+                        <span class="badge text-bg-success"
+                              th:if="${bid.status.name() == 'ACCEPTED'}">
+                            Вы выбраны
+                        </span>
+
+                        <span class="badge text-bg-secondary"
+                              th:if="${bid.status.name() == 'REJECTED'}">
+                            Отклонён
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small mb-1">
+                            Номер заявки
+                        </div>
+                        <div class="fw-medium"
+                             th:text="${bid.requestId}">
+                            1
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small mb-1">
+                            Дата смены
+                        </div>
+                        <div class="fw-medium"
+                             th:text="${#temporals.format(bid.workDate, 'dd.MM.yyyy')}">
+                            20.10.2026
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small mb-1">
+                            Время работы
+                        </div>
+                        <div class="fw-medium">
+                            <span th:text="${#temporals.format(bid.startTime, 'HH:mm')}">
+                                09:00
+                            </span>
+                            –
+                            <span th:text="${#temporals.format(bid.endTime, 'HH:mm')}">
+                                17:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-top pt-3 mt-3">
+                        <div class="text-secondary small mb-1">
+                            Дата отклика
+                        </div>
+                        <div class="fw-medium"
+                             th:text="${#temporals.format(bid.createdAt, 'dd.MM.yyyy HH:mm')}">
+                            19.10.2026 12:30
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-white border-0 px-4 pb-4">
+
+                    <div class="text-success fw-medium"
+                         th:if="${bid.status.name() == 'ACCEPTED'}">
+                        <span aria-hidden="true">✓</span>
+                        Клиент выбрал вас исполнителем.
+                    </div>
+
+                    <div class="text-secondary small"
+                         th:if="${bid.status.name() == 'PENDING'}">
+                        Ожидайте решения клиентской организации.
+                    </div>
+
+                    <div class="text-secondary small"
+                         th:if="${bid.status.name() == 'REJECTED'}">
+                        По этой заявке был выбран другой исполнитель.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

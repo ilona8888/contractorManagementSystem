@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Стать заказчиком</title>
+</head>
+
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <h1 class="h3 fw-bold mb-2">Стать заказчиком</h1>
+                        <p class="text-secondary mb-0">
+                            Заполните данные вашей организации,
+                            чтобы создавать заявки на поиск исполнителей.
+                        </p>
+                    </div>
+
+                    <!-- Общая ошибка -->
+                    <div class="alert alert-danger"
+                         role="alert"
+                         th:if="${errorMessage}"
+                         th:text="${errorMessage}">
+                    </div>
+
+                    <form method="post"
+                          th:action="@{/client-org/become}"
+                          th:object="${clientOrgForm}">
+
+
+                        <div class="mb-3">
+                            <label class="form-label" for="name">
+                                Название организации
+                            </label>
+
+                            <input class="form-control"
+                                   id="name"
+                                   maxlength="255"
+                                   placeholder="Например, ООО Ромашка"
+                                   required
+                                   th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''"
+                                   th:field="*{name}"
+                                   type="text">
+
+                            <div class="invalid-feedback"
+                                 th:errors="*{name}"
+                                 th:if="${#fields.hasErrors('name')}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="address">
+                                Адрес организации
+                            </label>
+
+                            <input class="form-control"
+                                   id="address"
+                                   maxlength="255"
+                                   placeholder="Город, улица, дом"
+                                   required
+                                   th:classappend="${#fields.hasErrors('address')} ? ' is-invalid' : ''"
+                                   th:field="*{address}"
+                                   type="text">
+
+                            <div class="invalid-feedback"
+                                 th:errors="*{address}"
+                                 th:if="${#fields.hasErrors('address')}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="legalEntity">
+                                Юридическое лицо
+                            </label>
+
+                            <input class="form-control"
+                                   id="legalEntity"
+                                   maxlength="255"
+                                   placeholder="Введите юридическое лицо"
+                                   required
+                                   th:classappend="${#fields.hasErrors('legalEntity')} ? ' is-invalid' : ''"
+                                   th:field="*{legalEntity}"
+                                   type="text">
+
+                            <div class="invalid-feedback"
+                                 th:errors="*{legalEntity}"
+                                 th:if="${#fields.hasErrors('legalEntity')}">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info small mt-4 mb-4">
+                            <strong>Обратите внимание.</strong>
+                            Тариф вашей организации назначит менеджер.
+                            На этом этапе указывать его не нужно.
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100"
+                                type="submit">
+                            Стать заказчиком
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <a class="link-secondary text-decoration-none"
+                               th:href="@{/}">
+                                Вернуться на главную
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

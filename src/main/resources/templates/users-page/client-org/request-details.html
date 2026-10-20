@@ -1,0 +1,717 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta content="width=device-width, initial-scale=1" name="viewport">-->
+<!--    <title>Подробности заявки</title>-->
+
+<!--</head>-->
+
+<!--<body class="bg-light">-->
+
+<!--<nav th:replace="~{fragments/header :: header}"></nav>-->
+
+<!--<main class="container py-4">-->
+
+<!--    &lt;!&ndash; Сообщение об успешном выборе исполнителя &ndash;&gt;-->
+<!--    <div class="alert alert-success alert-dismissible fade show"-->
+<!--         role="alert"-->
+<!--         th:if="${successMessage}">-->
+
+<!--        <span th:text="${successMessage}">-->
+<!--            Исполнитель успешно выбран.-->
+<!--        </span>-->
+
+<!--        <button aria-label="Закрыть"-->
+<!--                class="btn-close"-->
+<!--                data-bs-dismiss="alert"-->
+<!--                type="button">-->
+<!--        </button>-->
+<!--    </div>-->
+
+<!--    <div class="alert alert-danger"-->
+<!--         role="alert"-->
+<!--         th:if="${errorMessage}"-->
+<!--         th:text="${errorMessage}">-->
+<!--        Произошла ошибка.-->
+<!--    </div>-->
+
+<!--    <div class="mb-4">-->
+
+<!--        <a class="text-decoration-none"-->
+<!--           th:href="@{/requests/client-org}">-->
+<!--            &larr; Назад к моим заявкам-->
+<!--        </a>-->
+
+<!--        <h1 class="h3 mt-3 mb-1">-->
+<!--            Подробности заявки-->
+<!--        </h1>-->
+
+<!--        <p class="text-muted mb-0">-->
+<!--            Заявка №-->
+<!--            <span th:text="${request.id}">1</span>-->
+<!--        </p>-->
+<!--    </div>-->
+
+<!--    <section class="card border-0 shadow-sm mb-4">-->
+
+<!--        <div class="card-body p-4">-->
+
+<!--            <div class="d-flex justify-content-between-->
+<!--                        align-items-start flex-wrap gap-2 mb-4">-->
+
+<!--                <h2 class="h5 mb-0"-->
+<!--                    th:text="${request.positionName}">-->
+<!--                    Название должности-->
+<!--                </h2>-->
+
+<!--                <span class="badge bg-primary"-->
+<!--                      th:if="${request.status.name() == 'OPEN'}">-->
+<!--                    Открыта-->
+<!--                </span>-->
+
+<!--                &lt;!&ndash; Исполнитель выбран &ndash;&gt;-->
+<!--                <span class="badge bg-success"-->
+<!--                      th:if="${request.status.name() == 'AGREED'}">-->
+<!--                    Исполнитель выбран-->
+<!--                </span>-->
+
+<!--                &lt;!&ndash; Остальные статусы &ndash;&gt;-->
+<!--                <span class="badge bg-secondary"-->
+<!--                      th:if="${request.status.name() != 'OPEN'-->
+<!--          and request.status.name() != 'AGREED'}"-->
+<!--                      th:text="${request.status}">-->
+<!--                    Другой статус-->
+<!--                </span>-->
+
+<!--            </div>-->
+
+<!--            <div class="row g-4">-->
+
+<!--                <div class="col-6 col-md-3">-->
+<!--                    <div class="text-muted small mb-1">-->
+<!--                        Дата работы-->
+<!--                    </div>-->
+
+<!--                    <div class="fw-semibold"-->
+<!--                         th:text="${request.workDate}">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-6 col-md-3">-->
+<!--                    <div class="text-muted small mb-1">-->
+<!--                        Время работы-->
+<!--                    </div>-->
+
+<!--                    <div class="fw-semibold">-->
+<!--                        <span th:text="${request.startTime}">-->
+<!--                        </span>-->
+<!--                        –-->
+<!--                        <span th:text="${request.endTime}">-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-6 col-md-3">-->
+<!--                    <div class="text-muted small mb-1">-->
+<!--                        Общая оплата-->
+<!--                    </div>-->
+
+<!--                    <div class="fw-semibold">-->
+<!--                        <span th:text="${#numbers.formatDecimal(-->
+<!--                            request.amount, 1, 2-->
+<!--                        )}">-->
+<!--                        </span>-->
+<!--                        €-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="col-6 col-md-3">-->
+<!--                    <div class="text-muted small mb-1">-->
+<!--                        Количество откликов-->
+<!--                    </div>-->
+
+<!--                    <div class="fw-semibold"-->
+<!--                         th:text="${bids.size()}">-->
+<!--                        0-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
+
+<!--    &lt;!&ndash; Список откликов &ndash;&gt;-->
+<!--    <section>-->
+
+<!--        <div class="d-flex justify-content-between-->
+<!--                    align-items-center mb-3">-->
+
+<!--            <h2 class="h4 mb-0">-->
+<!--                Отклики исполнителей-->
+<!--            </h2>-->
+
+<!--            <span class="badge bg-secondary"-->
+<!--                  th:text="${bids.size()}">-->
+<!--                0-->
+<!--            </span>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Нет откликов &ndash;&gt;-->
+<!--        <div class="card border-0 shadow-sm"-->
+<!--             th:if="${#lists.isEmpty(bids)}">-->
+
+<!--            <div class="card-body text-center py-5">-->
+
+<!--                <h3 class="h5">-->
+<!--                    Пока нет откликов-->
+<!--                </h3>-->
+
+<!--                <p class="text-muted mb-0">-->
+<!--                    Когда исполнители откликнутся на заявку,-->
+<!--                    они появятся здесь.-->
+<!--                </p>-->
+
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Управление заявкой заказчиком &ndash;&gt;-->
+<!--        <div class="card border-0 shadow-sm mb-4"-->
+<!--             th:if="${request.status.name() == 'AGREED'}">-->
+
+<!--            <div class="card-body p-4">-->
+<!--                <h2 class="h5 mb-3">Управление заявкой</h2>-->
+
+<!--                <p class="text-muted">-->
+<!--                    После подтверждения выполнения работа будет считаться завершённой.-->
+<!--                </p>-->
+
+<!--                <div class="d-flex flex-wrap gap-2">-->
+
+<!--                    &lt;!&ndash; Подтвердить выполнение работы &ndash;&gt;-->
+<!--                    <form method="post"-->
+<!--                          th:action="@{/requests/{id}/complete(id=${request.id})}"-->
+<!--                          onsubmit="return confirm('Подтвердить, что работа выполнена?');">-->
+
+<!--                        <input th:if="${_csrf != null}"-->
+<!--                               type="hidden"-->
+<!--                               th:name="${_csrf.parameterName}"-->
+<!--                               th:value="${_csrf.token}">-->
+
+<!--                        <button type="submit" class="btn btn-success">-->
+<!--                            Работа выполнена-->
+<!--                        </button>-->
+<!--                    </form>-->
+
+<!--                    &lt;!&ndash; Отменить заявку &ndash;&gt;-->
+<!--                    <form method="post"-->
+<!--                          th:action="@{/requests/{id}/cancel(id=${request.id})}"-->
+<!--                          onsubmit="return confirm('Вы уверены, что хотите отменить заявку?');">-->
+
+<!--                        <input th:if="${_csrf != null}"-->
+<!--                               type="hidden"-->
+<!--                               th:name="${_csrf.parameterName}"-->
+<!--                               th:value="${_csrf.token}">-->
+
+<!--                        <button type="submit" class="btn btn-danger">-->
+<!--                            Отменить заявку-->
+<!--                        </button>-->
+<!--                    </form>-->
+
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Карточки откликов &ndash;&gt;-->
+<!--        <div class="card border-0 shadow-sm mb-3"-->
+<!--             th:each="bid : ${bids}">-->
+
+<!--            <div class="card-body p-4">-->
+
+<!--                <div class="d-flex justify-content-between-->
+<!--                            align-items-start flex-wrap gap-3">-->
+
+<!--                    &lt;!&ndash; Информация об исполнителе &ndash;&gt;-->
+<!--                    <div>-->
+
+<!--                        <h3 class="h6 mb-2">-->
+<!--                            Исполнитель №-->
+<!--                            <span th:text="${bid.contractorId}">-->
+<!--                                1-->
+<!--                            </span>-->
+<!--                        </h3>-->
+
+
+<!--                        <div class="text-muted small">-->
+<!--                            Дата отклика:-->
+
+<!--                            <span th:if="${bid.createdAt != null}"-->
+<!--                                  th:text="${#temporals.format(-->
+<!--                                      bid.createdAt,-->
+<!--                                      'dd.MM.yyyy HH:mm'-->
+<!--                                  )}">-->
+<!--                                18.10.2026 12:30-->
+<!--                            </span>-->
+
+<!--                            <span th:if="${bid.createdAt == null}">-->
+<!--                                Не указана-->
+<!--                            </span>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Статус отклика &ndash;&gt;-->
+<!--                    <div class="text-md-end">-->
+
+<!--                        <div class="text-muted small mb-1">-->
+<!--                            Статус отклика-->
+<!--                        </div>-->
+
+<!--                        <span class="badge bg-warning text-dark"-->
+<!--                              th:if="${bid.status.name() == 'PENDING'}">-->
+<!--                            Ожидает рассмотрения-->
+<!--                        </span>-->
+
+<!--                        <span class="badge bg-success"-->
+<!--                              th:if="${bid.status.name() == 'ACCEPTED'}">-->
+<!--                            Принят-->
+<!--                        </span>-->
+
+<!--                        <span class="badge bg-danger"-->
+<!--                              th:if="${bid.status.name() == 'REJECTED'}">-->
+<!--                            Отклонён-->
+<!--                        </span>-->
+
+<!--                        <span class="badge bg-secondary"-->
+<!--                              th:if="${bid.status.name() != 'PENDING'-->
+<!--                                  and bid.status.name() != 'ACCEPTED'-->
+<!--                                  and bid.status.name() != 'REJECTED'}"-->
+<!--                              th:text="${bid.status}">-->
+<!--                            Другой статус-->
+<!--                        </span>-->
+
+<!--                    </div>-->
+
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Кнопка выбора исполнителя &ndash;&gt;-->
+<!--                <div class="mt-3"-->
+<!--                     th:if="${request.status.name() == 'OPEN'-->
+<!--                         and bid.status.name() == 'PENDING'}">-->
+
+<!--                    <form method="post"-->
+<!--                          onsubmit="return confirm(-->
+<!--                              'Выбрать этого исполнителя? Остальные отклики будут отклонены.'-->
+<!--                          );"-->
+<!--                          th:action="@{/requests/{requestId}/bids/{bidId}/accept(-->
+<!--                              requestId=${request.id},-->
+<!--                              bidId=${bid.id}-->
+<!--                          )}">-->
+
+<!--                        &lt;!&ndash; CSRF-токен для Spring Security &ndash;&gt;-->
+<!--                        <input th:if="${_csrf != null}"-->
+<!--                               th:name="${_csrf.parameterName}"-->
+<!--                               th:value="${_csrf.token}"-->
+<!--                               type="hidden">-->
+
+<!--                        <button class="btn btn-success"-->
+<!--                                type="submit">-->
+<!--                            Выбрать исполнителя-->
+<!--                        </button>-->
+
+<!--                    </form>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Информация после выбора исполнителя &ndash;&gt;-->
+<!--                <div class="mt-3"-->
+<!--                     th:if="${request.status.name() == 'AGREED'-->
+<!--                         and bid.status.name() == 'ACCEPTED'}">-->
+
+<!--                    <div class="alert alert-success mb-0 py-2">-->
+<!--                        <strong>Исполнитель выбран.</strong>-->
+<!--                        Этот отклик принят заказчиком.-->
+<!--                    </div>-->
+
+<!--                </div>-->
+
+<!--                <div class="mt-3"-->
+<!--                     th:if="${request.status.name() == 'AGREED'-->
+<!--                         and bid.status.name() == 'REJECTED'}">-->
+
+<!--                    <div class="alert alert-secondary mb-0 py-2">-->
+<!--                        Заказчик выбрал другого исполнителя.-->
+<!--                    </div>-->
+
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </section>-->
+
+<!--</main>-->
+
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Подробности заявки</title>
+</head>
+
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-4">
+
+    <!-- Сообщение об успехе -->
+    <div class="alert alert-success alert-dismissible fade show"
+         role="alert"
+         th:if="${successMessage}">
+
+        <span th:text="${successMessage}"></span>
+
+        <button aria-label="Закрыть"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                type="button">
+        </button>
+    </div>
+
+    <!-- Сообщение об ошибке -->
+    <div class="alert alert-danger"
+         role="alert"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}">
+    </div>
+
+    <!-- Заголовок -->
+    <div class="mb-4">
+
+        <a class="text-decoration-none"
+           th:href="@{/requests/client-org}">
+            &larr; Назад к моим заявкам
+        </a>
+
+        <h1 class="h3 mt-3 mb-1">
+            Подробности заявки
+        </h1>
+
+        <p class="text-muted mb-0">
+            Заявка №
+            <span th:text="${request.id}"></span>
+        </p>
+    </div>
+
+    <!-- Основная информация о заявке -->
+    <section class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between
+                        align-items-start flex-wrap gap-2 mb-4">
+
+                <h2 class="h5 mb-0"
+                    th:text="${request.positionName}">
+                </h2>
+
+                <span class="badge bg-primary"
+                      th:if="${request.status.name() == 'OPEN'}">
+                    Открыта
+                </span>
+
+                <span class="badge bg-success"
+                      th:if="${request.status.name() == 'AGREED'}">
+                    Исполнитель выбран
+                </span>
+
+                <span class="badge bg-success"
+                      th:if="${request.status.name() == 'CLOSED'}">
+                    Работа завершена
+                </span>
+
+                <span class="badge bg-danger"
+                      th:if="${request.status.name() == 'CANCELLED'}">
+                    Отменена
+                </span>
+
+                <span class="badge bg-secondary"
+                      th:if="${request.status.name() == 'EXPIRED'}">
+                    Истекла
+                </span>
+
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-6 col-md-3">
+                    <div class="text-muted small mb-1">
+                        Дата работы
+                    </div>
+                    <div class="fw-semibold"
+                         th:text="${request.workDate}">
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="text-muted small mb-1">
+                        Время работы
+                    </div>
+                    <div class="fw-semibold">
+                        <span th:text="${request.startTime}"></span>
+                        –
+                        <span th:text="${request.endTime}"></span>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="text-muted small mb-1">
+                        Общая оплата
+                    </div>
+                    <div class="fw-semibold">
+                        <span th:text="${#numbers.formatDecimal(
+                            request.amount, 1, 2
+                        )}">
+                        </span>
+                        €
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="text-muted small mb-1">
+                        Количество откликов
+                    </div>
+                    <div class="fw-semibold"
+                         th:text="${bids.size()}">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Управление заявкой -->
+            <div class="border-top mt-4 pt-4"
+                 th:if="${request.status.name() == 'AGREED'}">
+
+                <h2 class="h5 mb-3">
+                    Управление заявкой
+                </h2>
+
+                <p class="text-muted">
+                    После подтверждения выполнения заявка будет закрыта,
+                    а смена появится в разделе «Мои смены» у исполнителя.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <!-- Подтвердить выполнение -->
+                    <form method="post"
+                          th:action="@{/requests/{id}/complete(id=${request.id})}"
+                          onsubmit="return confirm(
+                              'Подтвердить, что работа выполнена?'
+                          );">
+
+                        <input th:if="${_csrf != null}"
+                               type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            Работа выполнена
+                        </button>
+                    </form>
+
+                    <!-- Отменить заявку -->
+                    <form method="post"
+                          th:action="@{/requests/{id}/cancel(id=${request.id})}"
+                          onsubmit="return confirm(
+                              'Вы уверены, что хотите отменить заявку?'
+                          );">
+
+                        <input th:if="${_csrf != null}"
+                               type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            Отменить заявку
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- Информация для завершённой заявки -->
+            <div class="alert alert-success mt-4 mb-0"
+                 th:if="${request.status.name() == 'CLOSED'}">
+                Работа отмечена как выполненная.
+            </div>
+
+            <!-- Информация для отменённой заявки -->
+            <div class="alert alert-danger mt-4 mb-0"
+                 th:if="${request.status.name() == 'CANCELLED'}">
+                Заявка отменена.
+            </div>
+
+            <!-- Информация для просроченной заявки -->
+            <div class="alert alert-secondary mt-4 mb-0"
+                 th:if="${request.status.name() == 'EXPIRED'}">
+                Срок выполнения заявки истёк.
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Список откликов -->
+    <section>
+
+        <div class="d-flex justify-content-between
+                    align-items-center mb-3">
+
+            <h2 class="h4 mb-0">
+                Отклики исполнителей
+            </h2>
+
+            <span class="badge bg-secondary"
+                  th:text="${bids.size()}">
+            </span>
+        </div>
+
+        <!-- Нет откликов -->
+        <div class="card border-0 shadow-sm"
+             th:if="${#lists.isEmpty(bids)}">
+
+            <div class="card-body text-center py-5">
+
+                <h3 class="h5">
+                    Пока нет откликов
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Когда исполнители откликнутся на заявку,
+                    они появятся здесь.
+                </p>
+
+            </div>
+        </div>
+
+        <!-- Карточки откликов -->
+        <div class="card border-0 shadow-sm mb-3"
+             th:each="bid : ${bids}">
+
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between
+                            align-items-start flex-wrap gap-3">
+
+                    <!-- Информация об исполнителе -->
+                    <div>
+
+                        <h3 class="h6 mb-2">
+                            Исполнитель №
+                            <span th:text="${bid.contractorId}"></span>
+                        </h3>
+
+                        <div class="text-muted small">
+                            Дата отклика:
+
+                            <span th:if="${bid.createdAt != null}"
+                                  th:text="${#temporals.format(
+                                      bid.createdAt,
+                                      'dd.MM.yyyy HH:mm'
+                                  )}">
+                            </span>
+
+                            <span th:if="${bid.createdAt == null}">
+                                Не указана
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- Статус отклика -->
+                    <div class="text-md-end">
+
+                        <div class="text-muted small mb-1">
+                            Статус отклика
+                        </div>
+
+                        <span class="badge bg-warning text-dark"
+                              th:if="${bid.status.name() == 'PENDING'}">
+                            Ожидает рассмотрения
+                        </span>
+
+                        <span class="badge bg-success"
+                              th:if="${bid.status.name() == 'ACCEPTED'}">
+                            Принят
+                        </span>
+
+                        <span class="badge bg-danger"
+                              th:if="${bid.status.name() == 'REJECTED'}">
+                            Отклонён
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- Выбор исполнителя -->
+                <div class="mt-3"
+                     th:if="${request.status.name() == 'OPEN'
+                         and bid.status.name() == 'PENDING'}">
+
+                    <form method="post"
+                          th:action="@{/requests/{requestId}/bids/{bidId}/accept(
+                              requestId=${request.id},
+                              bidId=${bid.id}
+                          )}"
+                          onsubmit="return confirm(
+                              'Выбрать этого исполнителя? Остальные отклики будут отклонены.'
+                          );">
+
+                        <input th:if="${_csrf != null}"
+                               type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button class="btn btn-success"
+                                type="submit">
+                            Выбрать исполнителя
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Принятый отклик -->
+                <div class="mt-3"
+                     th:if="${request.status.name() == 'AGREED'
+                         and bid.status.name() == 'ACCEPTED'}">
+
+                    <div class="alert alert-success mb-0 py-2">
+                        <strong>Исполнитель выбран.</strong>
+                        Этот отклик принят заказчиком.
+                    </div>
+                </div>
+
+                <!-- Отклонённый отклик -->
+                <div class="mt-3"
+                     th:if="${request.status.name() == 'AGREED'
+                         and bid.status.name() == 'REJECTED'}">
+
+                    <div class="alert alert-secondary mb-0 py-2">
+                        Заказчик выбрал другого исполнителя.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

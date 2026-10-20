@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Доступные заявки</title>
+</head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-5">
+
+    <div class="alert alert-success"
+         role="alert"
+         th:if="${successMessage}"
+         th:text="${successMessage}">
+    </div>
+
+    <div class="alert alert-warning"
+         role="alert"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}">
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">Доступные заявки</h1>
+            <p class="text-secondary mb-0">
+                Выберите смену, на которую хотите откликнуться.
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-info"
+         th:if="${#lists.isEmpty(requests)}">
+        Сейчас заявок нет. Загляните позже!
+    </div>
+
+    <div class="row g-4" th:unless="${#lists.isEmpty(requests)}">
+
+        <div class="col-12 col-md-6 col-xl-4"
+             th:each="request : ${requests}">
+
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                        <h2 class="h5 mb-0"
+                            th:text="${request.positionName}">
+                            Название должности
+                        </h2>
+
+                        <span class="badge text-bg-success"
+                              th:if="${request.status.name() == 'OPEN'}">
+                            Открыта
+                        </span>
+
+                        <span class="badge text-bg-secondary"
+                              th:text="${request.status}"
+                              th:unless="${request.status.name() == 'OPEN'}">
+                            Статус
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small mb-1">
+                            Дата смены
+                        </div>
+                        <div class="fw-medium"
+                             th:text="${#temporals.format(request.workDate, 'dd.MM.yyyy')}">
+                            20.10.2026
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="text-secondary small mb-1">
+                            Время работы
+                        </div>
+                        <div class="fw-medium">
+                            <span th:text="${#temporals.format(request.startTime, 'HH:mm')}">
+                                09:00
+                            </span>
+                            –
+                            <span th:text="${#temporals.format(request.endTime, 'HH:mm')}">
+                                17:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-top pt-3 mt-3">
+                        <div class="text-secondary small mb-1">
+                            Оплата за смену
+                        </div>
+
+                        <div class="fs-3 fw-bold text-success">
+                            <span th:text="${#numbers.formatDecimal(request.amount, 1, 2)}">
+                                160.00
+                            </span>
+                            €
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-white border-0 px-4 pb-4">
+                    <form method="post"
+                          th:action="@{/contractor/bids}"
+                          th:if="${request.status.name() == 'OPEN'}">
+
+                        <input name="requestId"
+                               th:value="${request.id}"
+                               type="hidden">
+
+                        <button class="btn btn-primary w-100"
+                                type="submit">
+                            Откликнуться
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

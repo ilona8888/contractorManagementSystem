@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Управление должностями</title>
+</head>
+<body>
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<div class="container mt-4">
+    <h2>Управление должностями</h2>
+
+    <div th:if="${successMessage}"
+         class="alert alert-success"
+         th:text="${successMessage}">
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="alert alert-danger"
+         th:text="${errorMessage}">
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Добавить должность
+        </div>
+
+        <div class="card-body">
+            <form th:action="@{/positions/add}"
+                  method="post">
+
+                <input type="hidden"
+                       th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">
+                        Название должности
+                    </label>
+
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           class="form-control"
+                           maxlength="150"
+                           required
+                           placeholder="Например, официант">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Добавить должность
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <h4>Список должностей</h4>
+
+    <div th:if="${#lists.isEmpty(positions)}"
+         class="alert alert-info">
+        Должностей пока нет.
+    </div>
+
+    <div class="table-responsive"
+         th:unless="${#lists.isEmpty(positions)}">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Статус</th>
+                <th>Действие</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="position : ${positions}">
+                <td th:text="${position.id}"></td>
+                <td th:text="${position.name}"></td>
+
+                <td>
+                    <span th:if="${position.active}"
+                          class="badge bg-success">
+                        Активна
+                    </span>
+
+                    <span th:unless="${position.active}"
+                          class="badge bg-secondary">
+                        Неактивна
+                    </span>
+                </td>
+
+                <td>
+                    <form th:action="@{/positions/{id}/toggle(id=${position.id})}"
+                          method="post">
+
+                        <input type="hidden"
+                               th:if="${_csrf != null}"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+
+                        <button type="submit"
+                                class="btn btn-sm"
+                                th:classappend="${position.active}
+                                    ? ' btn-outline-danger'
+                                    : ' btn-outline-success'"
+                                th:text="${position.active}
+                                    ? 'Деактивировать'
+                                    : 'Активировать'">
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

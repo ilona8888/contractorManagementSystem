@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Все заявки</title>
+</head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/header :: header}"></nav>
+
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Все заявки</h1>
+            <p class="text-muted mb-0">
+                Просматривайте заявки организаций и отклики исполнителей.
+            </p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm"
+         th:if="${#lists.isEmpty(requests)}">
+        <div class="card-body text-center py-5">
+            <h2 class="h5 mb-2">Пока нет заявок</h2>
+            <p class="text-muted mb-0">
+                Здесь будут отображаться заявки всех организаций.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4" th:unless="${#lists.isEmpty(requests)}">
+
+        <div class="col-12" th:each="request : ${requests}">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start flex-wrap gap-2 mb-3">
+
+                        <div>
+                            <h2 class="h5 mb-1"
+                                th:text="${request.positionName}">
+                                Название должности
+                            </h2>
+
+                            <div class="text-muted small mt-1">
+                                Организация:
+                                <span class="fw-semibold"
+                                      th:text="${request.clientOrgName}">
+                                    Название организации
+                                </span>
+                            </div>
+                        </div>
+
+                        <span class="badge rounded-pill bg-primary"
+                              th:text="${request.status}">
+                        </span>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Дата работы
+                            </div>
+                            <div class="fw-semibold"
+                                 th:text="${request.workDate}">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Время
+                            </div>
+                            <div class="fw-semibold">
+                                <span th:text="${request.startTime}"></span>
+                                –
+                                <span th:text="${request.endTime}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Оплата за час
+                            </div>
+                            <div class="fw-semibold">
+                                <span th:text="${request.hourlyRate}"></span>
+                                €/час
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Количество откликов
+                            </div>
+                            <div class="fw-semibold"
+                                 th:text="${#lists.size(request.bids)}">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Информация об откликах -->
+                    <div class="border-top mt-4 pt-3">
+
+                        <h3 class="h6 mb-3">Отклики исполнителей</h3>
+
+                        <!-- Откликов нет -->
+                        <div class="text-muted small"
+                             th:if="${#lists.isEmpty(request.bids)}">
+                            На эту заявку пока никто не откликнулся.
+                        </div>
+
+                        <!-- Список откликов -->
+                        <div class="d-flex flex-column gap-2"
+                             th:unless="${#lists.isEmpty(request.bids)}">
+
+                            <div class="d-flex justify-content-between
+                                        align-items-center flex-wrap gap-2
+                                        bg-light rounded p-3"
+                                 th:each="bid : ${request.bids}">
+
+                                <div>
+                                    <div class="fw-semibold"
+                                         th:text="${bid.contractorEmail}">
+                                        contractor@example.com
+                                    </div>
+                                    <div class="text-muted small">
+                                        Исполнитель
+                                    </div>
+                                </div>
+
+                                <span class="badge rounded-pill bg-warning text-dark"
+                                      th:if="${bid.status.name() == 'PENDING'}">
+                                    На рассмотрении
+                                </span>
+
+                                <span class="badge rounded-pill bg-success"
+                                      th:if="${bid.status.name() == 'ACCEPTED'}">
+                                    Исполнитель выбран
+                                </span>
+
+                                <span class="badge rounded-pill bg-secondary"
+                                      th:if="${bid.status.name() == 'REJECTED'}">
+                                    Отклонён
+                                </span>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

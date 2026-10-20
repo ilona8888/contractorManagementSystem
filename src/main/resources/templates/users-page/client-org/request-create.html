@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Создание заявки</title>
+
+</head>
+<body class="bg-light">
+
+<nav th:replace="fragments/header :: header"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+
+                    <h1 class="h3 mb-2">Создать заявку</h1>
+                    <p class="text-secondary mb-4">
+                        Заполните информацию о необходимых работах.
+                    </p>
+
+                    <form method="post"
+                          th:action="@{/requests}"
+                          th:object="${request}">
+
+                        <div class="mb-3">
+                            <label class="form-label" for="positionId">
+                                Должность
+                            </label>
+
+                            <select class="form-select"
+                                    id="positionId"
+                                    required
+                                    th:field="*{positionId}">
+                                <option value="">Выберите должность</option>
+
+                                <option th:each="position : ${positions}"
+                                        th:text="${position.name}"
+                                        th:value="${position.id}">
+                                </option>
+                            </select>
+
+                            <div class="text-danger small"
+                                 th:errors="*{positionId}"
+                                 th:if="${#fields.hasErrors('positionId')}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="workDate">
+                                Дата работы
+                            </label>
+
+                            <input class="form-control"
+                                   id="workDate"
+                                   required
+                                   th:field="*{workDate}"
+                                   type="date">
+
+                            <div class="text-danger small"
+                                 th:errors="*{workDate}"
+                                 th:if="${#fields.hasErrors('workDate')}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6 mb-3">
+                                <label class="form-label" for="startTime">
+                                    Время начала
+                                </label>
+
+                                <input class="form-control"
+                                       id="startTime"
+                                       required
+                                       th:field="*{startTime}"
+                                       type="time">
+                            </div>
+
+                            <div class="col-sm-6 mb-3">
+                                <label class="form-label" for="endTime">
+                                    Время окончания
+                                </label>
+
+                                <input class="form-control"
+                                       id="endTime"
+                                       required
+                                       th:field="*{endTime}"
+                                       type="time">
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" type="submit">
+                                Создать заявку
+                            </button>
+
+                            <a class="btn btn-outline-secondary"
+                               th:href="@{/client/requests}">
+                                Отмена
+                            </a>
+                        </div>
+
+                        <div class="alert alert-warning"
+                             role="alert"
+                             th:if="${errorMessage}"
+                             th:text="${errorMessage}">
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
