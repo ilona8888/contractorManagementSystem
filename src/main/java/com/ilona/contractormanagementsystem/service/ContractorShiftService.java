@@ -1,8 +1,8 @@
 package com.ilona.contractormanagementsystem.service;
 
 import com.ilona.contractormanagementsystem.dto.ContractorShiftDto;
-import com.ilona.contractormanagementsystem.enam.BidStatus;
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.BidStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.Bid;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
 import com.ilona.contractormanagementsystem.repository.BidRepository;
@@ -33,7 +33,7 @@ public class ContractorShiftService {
                 .findAllByContractor_IdAndStatusAndRequest_StatusAndRequest_WorkDateBetweenOrderByRequest_WorkDateAsc(
                         contractorId,
                         BidStatus.ACCEPTED,
-                        RequestStatus.CLOSED,
+                        WorkRequestStatus.CLOSED,
                         startDate,
                         endDate
                 );

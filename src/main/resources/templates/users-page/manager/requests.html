@@ -30,6 +30,31 @@
         </div>
     </div>
 
+<!--    <div class="card border-0 shadow-sm mb-4">-->
+<!--        <div class="card-body p-4">-->
+
+<!--            <form method="get" th:action="@{/requests/full-requests}">-->
+<!--                <input-->
+<!--                        class="form-control"-->
+<!--                        id="address"-->
+<!--                        name="address"-->
+<!--                        placeholder="Введите улицу, город или часть адреса"-->
+<!--                        th:value="${address}"-->
+<!--                        type="text">-->
+
+<!--                <button class="btn btn-primary" type="submit">-->
+<!--                    Найти-->
+<!--                </button>-->
+
+<!--                <a class="btn btn-outline-secondary"-->
+<!--                   th:href="@{/requests/full-requests}">-->
+<!--                    Сбросить-->
+<!--                </a>-->
+<!--            </form>-->
+
+<!--        </div>-->
+<!--    </div>-->
+
     <div class="row g-4" th:unless="${#lists.isEmpty(requests)}">
 
         <div class="col-12" th:each="request : ${requests}">

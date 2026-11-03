@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.repository;
 
-import com.ilona.contractormanagementsystem.enam.BidStatus;
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.BidStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.Bid;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -21,7 +21,7 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findAllByContractor_IdAndStatusAndRequest_StatusAndRequest_WorkDateBetweenOrderByRequest_WorkDateAsc(
             Long contractorId,
             BidStatus bidStatus,
-            RequestStatus requestStatus,
+            WorkRequestStatus requestStatus,
             LocalDate startDate,
             LocalDate endDate
     );

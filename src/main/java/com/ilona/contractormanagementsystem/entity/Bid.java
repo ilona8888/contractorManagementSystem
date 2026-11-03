@@ -1,6 +1,5 @@
 package com.ilona.contractormanagementsystem.entity;
 
-import com.ilona.contractormanagementsystem.enam.BidStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

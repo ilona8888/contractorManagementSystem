@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.service;
 
 import com.ilona.contractormanagementsystem.dto.UserDto;
-import com.ilona.contractormanagementsystem.enam.UserRole;
+import com.ilona.contractormanagementsystem.entity.UserRole;
 import com.ilona.contractormanagementsystem.entity.Contractor;
 import com.ilona.contractormanagementsystem.entity.User;
 import com.ilona.contractormanagementsystem.repository.ContractorRepository;

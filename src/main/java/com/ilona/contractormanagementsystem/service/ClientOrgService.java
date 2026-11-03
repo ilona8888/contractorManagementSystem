@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.service;
 
 import com.ilona.contractormanagementsystem.dto.ClientOrgForm;
-import com.ilona.contractormanagementsystem.enam.UserRole;
+import com.ilona.contractormanagementsystem.entity.UserRole;
 import com.ilona.contractormanagementsystem.entity.ClientOrg;
 import com.ilona.contractormanagementsystem.entity.User;
 import com.ilona.contractormanagementsystem.repository.ClientOrgRepository;
@@ -9,6 +9,8 @@ import com.ilona.contractormanagementsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +57,18 @@ public class ClientOrgService {
 
         user.setRole(UserRole.CLIENT_ORG);
         userRepository.save(user);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<ClientOrg> searchOrganizations(String address) {
+        if (address == null || address.isBlank()) {
+            return clientOrgRepository.findAllByOrderByNameAsc();
+        }
+
+        return clientOrgRepository
+                .findByAddressContainingIgnoreCaseOrderByNameAsc(
+                        address.trim()
+                );
     }
 }

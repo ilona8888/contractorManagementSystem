@@ -57,6 +57,7 @@
                             <input class="form-control"
                                    id="workDate"
                                    required
+                                   th:attr="min=${minDate}"
                                    th:field="*{workDate}"
                                    type="date">
 
@@ -97,8 +98,13 @@
                                 Создать заявку
                             </button>
 
+                            <button type="reset" class="btn btn-secondary">
+                                Очистить форму
+                            </button>
+
+
                             <a class="btn btn-outline-secondary"
-                               th:href="@{/client/requests}">
+                               th:href="@{/requests/client-org}">
                                 Отмена
                             </a>
                         </div>

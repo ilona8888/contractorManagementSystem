@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="requestCards(items)">
+
+    <div class="card border-0 shadow-sm"
+         th:if="${#lists.isEmpty(items)}">
+        <div class="card-body text-center py-4">
+            <p class="text-muted mb-0">
+                В этой категории нет заявок.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4"
+         th:unless="${#lists.isEmpty(items)}">
+
+        <div class="col-12" th:each="request : ${items}">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start flex-wrap gap-2 mb-3">
+
+                        <h2 class="h5 mb-1"
+                            th:text="${request.positionName}">
+                            Название должности
+                        </h2>
+
+                        <span class="badge rounded-pill"
+                              th:classappend="${
+                                  request.status.name() == 'OPEN' ? ' bg-primary' :
+                                  request.status.name() == 'AGREED' ? ' bg-success' :
+                                  request.status.name() == 'EXPIRED' ? ' bg-secondary' :
+                                  request.status.name() == 'CANCELLED' ? ' bg-danger' :
+                                  request.status.name() == 'CLOSED' ? ' bg-dark' :
+                                  ' bg-light text-dark'
+                              }"
+                              th:text="${
+                                  request.status.name() == 'OPEN' ? 'Открыта' :
+                                  request.status.name() == 'AGREED' ? 'Согласована' :
+                                  request.status.name() == 'EXPIRED' ? 'Истекла' :
+                                  request.status.name() == 'CANCELLED' ? 'Отменена' :
+                                  request.status.name() == 'CLOSED' ? 'Закрыта' :
+                                  request.status
+                              }">
+                            Статус
+                        </span>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Дата работы
+                            </div>
+                            <div class="fw-semibold"
+                                 th:text="${request.workDate}">
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Время
+                            </div>
+                            <div class="fw-semibold">
+                                <span th:text="${request.startTime}"></span>
+                                –
+                                <span th:text="${request.endTime}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Оплата
+                            </div>
+                            <div class="fw-semibold">
+                                <span th:text="${request.amount}">1000</span> €
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                            <div class="text-muted small mb-1">
+                                Отклики
+                            </div>
+                            <div class="fw-semibold"
+                                 th:text="${request.bidCount}">
+                                0
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="border-top mt-4 pt-3
+                                d-flex justify-content-end">
+                        <a class="btn btn-outline-primary"
+                           th:href="@{/requests/{id}(id=${request.id})}">
+                            Посмотреть отклики
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</th:block>
+
+</body>
+</html>

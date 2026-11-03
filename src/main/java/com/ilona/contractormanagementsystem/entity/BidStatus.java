@@ -1,4 +1,4 @@
-package com.ilona.contractormanagementsystem.enam;
+package com.ilona.contractormanagementsystem.entity;
 
 public enum BidStatus {
     PENDING, ACCEPTED, REJECTED

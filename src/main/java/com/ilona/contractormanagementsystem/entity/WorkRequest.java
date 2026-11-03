@@ -1,6 +1,5 @@
 package com.ilona.contractormanagementsystem.entity;
 
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,7 +46,7 @@ public class WorkRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private RequestStatus status = RequestStatus.OPEN;
+    private WorkRequestStatus status = WorkRequestStatus.OPEN;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

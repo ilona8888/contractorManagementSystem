@@ -2,7 +2,7 @@ package com.ilona.contractormanagementsystem.service;
 
 import com.ilona.contractormanagementsystem.dto.CreateWorkRequestDto;
 import com.ilona.contractormanagementsystem.dto.WorkRequestViewDto;
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.ClientOrg;
 import com.ilona.contractormanagementsystem.entity.Position;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
@@ -67,7 +67,7 @@ class WorkRequestServiceTest {
         request.setStartTime(LocalTime.of(10, 0));
         request.setEndTime(LocalTime.of(15, 0));
         request.setHourlyRate(new BigDecimal("20.00"));
-        request.setStatus(RequestStatus.OPEN);
+        request.setStatus(WorkRequestStatus.OPEN);
     }
 
 
@@ -164,7 +164,7 @@ class WorkRequestServiceTest {
     void getOpenAllRequestsForView_shouldCalculateHoursAndAmount() {
         request.setBids(new ArrayList<>());
 
-        when(workRequestRepository.findAllByStatus(RequestStatus.OPEN))
+        when(workRequestRepository.findAllByStatus(WorkRequestStatus.OPEN))
                 .thenReturn(List.of(request));
 
         List<WorkRequestViewDto> result =
@@ -177,15 +177,15 @@ class WorkRequestServiceTest {
         assertEquals(1L, dto.getId());
         assertEquals("Официант", dto.getPositionName());
         assertEquals(new BigDecimal("100.00"), dto.getAmount());
-        assertEquals(RequestStatus.OPEN, dto.getStatus());
+        assertEquals(WorkRequestStatus.OPEN, dto.getStatus());
         assertEquals(0L, dto.getBidCount());
 
-        verify(workRequestRepository).findAllByStatus(RequestStatus.OPEN);
+        verify(workRequestRepository).findAllByStatus(WorkRequestStatus.OPEN);
     }
 
     @Test
     void getOpenAllRequestsForView_shouldReturnEmptyList_whenNoOpenRequests() {
-        when(workRequestRepository.findAllByStatus(RequestStatus.OPEN))
+        when(workRequestRepository.findAllByStatus(WorkRequestStatus.OPEN))
                 .thenReturn(List.of());
 
         List<WorkRequestViewDto> result =
@@ -196,7 +196,7 @@ class WorkRequestServiceTest {
 
     @Test
     void completeRequest_shouldChangeStatusToClosed_whenRequestIsAgreed() {
-        request.setStatus(RequestStatus.AGREED);
+        request.setStatus(WorkRequestStatus.AGREED);
 
         when(workRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
@@ -206,7 +206,7 @@ class WorkRequestServiceTest {
 
         workRequestService.completeRequest(1L);
 
-        assertEquals(RequestStatus.CLOSED, request.getStatus());
+        assertEquals(WorkRequestStatus.CLOSED, request.getStatus());
         verify(workRequestRepository).save(request);
     }
 
@@ -227,7 +227,7 @@ class WorkRequestServiceTest {
 
     @Test
     void completeRequest_shouldThrowException_whenStatusIsOpen() {
-        request.setStatus(RequestStatus.OPEN);
+        request.setStatus(WorkRequestStatus.OPEN);
 
         when(workRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
@@ -247,7 +247,7 @@ class WorkRequestServiceTest {
 
     @Test
     void cancelRequest_shouldChangeStatusToCancelled_whenRequestIsOpen() {
-        request.setStatus(RequestStatus.OPEN);
+        request.setStatus(WorkRequestStatus.OPEN);
 
         when(workRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
@@ -257,13 +257,13 @@ class WorkRequestServiceTest {
 
         workRequestService.cancelRequest(1L);
 
-        assertEquals(RequestStatus.CANCELLED, request.getStatus());
+        assertEquals(WorkRequestStatus.CANCELLED, request.getStatus());
         verify(workRequestRepository).save(request);
     }
 
     @Test
     void cancelRequest_shouldChangeStatusToCancelled_whenRequestIsAgreed() {
-        request.setStatus(RequestStatus.AGREED);
+        request.setStatus(WorkRequestStatus.AGREED);
 
         when(workRequestRepository.findById(1L))
                 .thenReturn(Optional.of(request));
@@ -273,7 +273,7 @@ class WorkRequestServiceTest {
 
         workRequestService.cancelRequest(1L);
 
-        assertEquals(RequestStatus.CANCELLED, request.getStatus());
+        assertEquals(WorkRequestStatus.CANCELLED, request.getStatus());
         verify(workRequestRepository).save(request);
     }
 
@@ -294,20 +294,20 @@ class WorkRequestServiceTest {
 
     @Test
     void cancelRequest_shouldThrowException_whenRequestIsClosed() {
-        assertCannotCancel(RequestStatus.CLOSED);
+        assertCannotCancel(WorkRequestStatus.CLOSED);
     }
 
     @Test
     void cancelRequest_shouldThrowException_whenRequestIsExpired() {
-        assertCannotCancel(RequestStatus.EXPIRED);
+        assertCannotCancel(WorkRequestStatus.EXPIRED);
     }
 
     @Test
     void cancelRequest_shouldThrowException_whenRequestIsAlreadyCancelled() {
-        assertCannotCancel(RequestStatus.CANCELLED);
+        assertCannotCancel(WorkRequestStatus.CANCELLED);
     }
 
-    private void assertCannotCancel(RequestStatus status) {
+    private void assertCannotCancel(WorkRequestStatus status) {
         request.setStatus(status);
 
         when(workRequestRepository.findById(1L))

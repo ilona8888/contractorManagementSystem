@@ -1,6 +1,6 @@
 package com.ilona.contractormanagementsystem.repository;
 
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface WorkRequestRepository extends JpaRepository<WorkRequest, Long> {
 
-    List<WorkRequest> findAllByStatus(RequestStatus status);
+    List<WorkRequest> findAllByStatus(WorkRequestStatus status);
 
     List<WorkRequest> findAllByClientOrg_IdOrderByWorkDateDesc(
             Long clientOrgId
@@ -30,10 +30,8 @@ public interface WorkRequestRepository extends JpaRepository<WorkRequest, Long> 
 
     long countByClientOrg_IdAndStatus(
             Long clientOrgId,
-            RequestStatus status
+            WorkRequestStatus status
     );
-
-    long countByClientOrg_Id(Long clientOrgId);
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -49,8 +47,8 @@ public interface WorkRequestRepository extends JpaRepository<WorkRequest, Long> 
 """)
     int expireOldRequests(
             @Param("today") LocalDate today,
-            @Param("expiredStatus") RequestStatus expiredStatus,
-            @Param("openStatus") RequestStatus openStatus,
-            @Param("agreedStatus") RequestStatus agreedStatus
+            @Param("expiredStatus") WorkRequestStatus expiredStatus,
+            @Param("openStatus") WorkRequestStatus openStatus,
+            @Param("agreedStatus") WorkRequestStatus agreedStatus
     );
 }

@@ -1,6 +1,6 @@
 package com.ilona.contractormanagementsystem.dto;
 
-import com.ilona.contractormanagementsystem.enam.BidStatus;
+import com.ilona.contractormanagementsystem.entity.BidStatus;
 import com.ilona.contractormanagementsystem.entity.Bid;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
 
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 public record BidResponseDto(
         Long id,
         Long requestId,
-        Long contractorId,
+        String contractorName,
         BidStatus status,
         OffsetDateTime createdAt,
         String positionName,
@@ -25,7 +25,7 @@ public record BidResponseDto(
         return new BidResponseDto(
                 bid.getId(),
                 request.getId(),
-                bid.getContractor().getId(),
+                bid.getContractor().getUser().getEmail(),
                 bid.getStatus(),
                 bid.getCreatedAt(),
                 request.getPosition().getName(),

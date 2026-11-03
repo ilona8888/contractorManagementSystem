@@ -17,18 +17,6 @@ public class TariffService {
         this.clientOrgRepository = clientOrgRepository;
     }
 
-    @Transactional(readOnly = true)
-    public List<ClientOrg> searchOrganizations(String address) {
-        if (address == null || address.isBlank()) {
-            return clientOrgRepository.findAllByOrderByNameAsc();
-        }
-
-        return clientOrgRepository
-                .findByAddressContainingIgnoreCaseOrderByNameAsc(
-                        address.trim()
-                );
-    }
-
     @Transactional
     public void updateRate(Long clientOrgId, BigDecimal rate) {
         if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0) {

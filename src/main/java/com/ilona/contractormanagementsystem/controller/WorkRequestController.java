@@ -2,14 +2,13 @@ package com.ilona.contractormanagementsystem.controller;
 
 import com.ilona.contractormanagementsystem.dto.CreateWorkRequestDto;
 import com.ilona.contractormanagementsystem.dto.WorkRequestDetailsDto;
-import com.ilona.contractormanagementsystem.entity.WorkRequest;
 import com.ilona.contractormanagementsystem.service.BidService;
+import com.ilona.contractormanagementsystem.service.ClientOrgService;
 import com.ilona.contractormanagementsystem.service.PositionService;
 import com.ilona.contractormanagementsystem.service.WorkRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/requests")
@@ -26,6 +27,7 @@ public class WorkRequestController {
     private final WorkRequestService workRequestService;
     private final PositionService positionService;
     private final BidService bidService;
+    private final ClientOrgService clientOrgService;
 
     //Страница, которая отдает все созданные заявки
     @GetMapping({"", "/"})
@@ -39,7 +41,7 @@ public class WorkRequestController {
     @GetMapping({"/client-org"})
     @PreAuthorize("hasRole('CLIENT_ORG')")
     public String getRequests(@AuthenticationPrincipal UserDetails user, Model model) {
-        model.addAttribute("requests", workRequestService.getClientOpenRequestsForView(user.getUsername()));
+        model.addAttribute("requests", workRequestService.getClientRequestsForView(user.getUsername()));
         return "users-page/client-org/requests";
     }
 
@@ -49,6 +51,7 @@ public class WorkRequestController {
     public String showCreateForm(Model model) {
         model.addAttribute("request", new CreateWorkRequestDto());
         model.addAttribute("positions", positionService.getActivePositions());
+        model.addAttribute("minDate", LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE));
 
         return "users-page/client-org/request-create";
     }
@@ -78,7 +81,7 @@ public class WorkRequestController {
 
             return "redirect:/requests/client-org";
 
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             model.addAttribute("positions", positionService.getActivePositions());
             model.addAttribute("errorMessage", e.getMessage());
 

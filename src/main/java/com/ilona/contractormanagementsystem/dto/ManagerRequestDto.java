@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.dto;
 
 
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ public record ManagerRequestDto(
         LocalDate workDate,
         LocalTime startTime,
         LocalTime endTime,
-        RequestStatus status,
+        WorkRequestStatus status,
         List<ManagerBidDto> bids
 ) {
 }

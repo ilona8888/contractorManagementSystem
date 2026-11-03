@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.dto;
 
 
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +22,9 @@ public class WorkRequestViewDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private BigDecimal amount;
-    private RequestStatus status;
+    private WorkRequestStatus status;
     private long bidCount;
+    private String address;
 
     public static WorkRequestViewDto from(WorkRequest request) {
         long minutes = Duration.between(
@@ -44,7 +45,8 @@ public class WorkRequestViewDto {
                 request.getEndTime(),
                 amount,
                 request.getStatus(),
-                request.getBids().size()
+                request.getBids().size(),
+                request.getClientOrg().getAddress()
         );
     }
 

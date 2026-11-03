@@ -2,8 +2,8 @@ package com.ilona.contractormanagementsystem.service;
 
 
 import com.ilona.contractormanagementsystem.dto.BidResponseDto;
-import com.ilona.contractormanagementsystem.enam.BidStatus;
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.BidStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.Bid;
 import com.ilona.contractormanagementsystem.entity.Contractor;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
@@ -37,7 +37,7 @@ public class BidService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Исполнитель не найден"));
 
-        if (request.getStatus() != RequestStatus.OPEN) {
+        if (request.getStatus() != WorkRequestStatus.OPEN) {
             throw new IllegalStateException(
                     "На эту заявку больше нельзя откликнуться");
         }
@@ -93,7 +93,7 @@ public class BidService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Заявка не найдена"));
 
-        if (request.getStatus() != RequestStatus.OPEN) {
+        if (request.getStatus() != WorkRequestStatus.OPEN) {
             throw new IllegalStateException(
                     "Заявка уже недоступна для выбора исполнителя");
         }
@@ -115,7 +115,7 @@ public class BidService {
             }
         }
 
-        request.setStatus(RequestStatus.AGREED);
+        request.setStatus(WorkRequestStatus.AGREED);
 
         requestRepository.save(request);
         bidRepository.saveAll(otherBids);

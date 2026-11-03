@@ -1,7 +1,7 @@
 package com.ilona.contractormanagementsystem.service;
 
 import com.ilona.contractormanagementsystem.dto.*;
-import com.ilona.contractormanagementsystem.enam.RequestStatus;
+import com.ilona.contractormanagementsystem.entity.WorkRequestStatus;
 import com.ilona.contractormanagementsystem.entity.ClientOrg;
 import com.ilona.contractormanagementsystem.entity.Position;
 import com.ilona.contractormanagementsystem.entity.WorkRequest;
@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -51,6 +53,7 @@ public class WorkRequestService {
                         ));
 
 
+        validateWorkTime(dto.getWorkDate(), dto.getStartTime(), dto.getEndTime());
         WorkRequest request = new WorkRequest();
 
         request.setClientOrg(clientOrg);
@@ -63,11 +66,26 @@ public class WorkRequestService {
         return workRequestRepository.save(request);
     }
 
+    private void validateWorkTime(LocalDate workDate, LocalTime startTime, LocalTime endTime) {
+        if (!startTime.isBefore(endTime)) {
+            throw new IllegalArgumentException("Время начала должно быть раньше времени окончания");
+        }
+
+        if (workDate.isEqual(LocalDate.now())) {
+            LocalTime now = LocalTime.now();
+            if (!startTime.isAfter(now)) {
+                throw new IllegalArgumentException(
+                        "Для сегодняшней работы время начала должно быть позже текущего времени"
+                );
+            }
+        }
+    }
+
     @Transactional(readOnly = true)
     public List<WorkRequestViewDto> getOpenAllRequestsForView() {
 
         List<WorkRequest> requests =
-                workRequestRepository.findAllByStatus(RequestStatus.OPEN);
+                workRequestRepository.findAllByStatus(WorkRequestStatus.OPEN);
 
         return requests.stream()
                 .map(request -> {
@@ -91,14 +109,15 @@ public class WorkRequestService {
                             request.getEndTime(),
                             amount,
                             request.getStatus(),
-                            request.getBids().size()
+                            request.getBids().size(),
+                            request.getClientOrg().getAddress()
                     );
                 })
                 .toList();
     }
 
     //Отображение заявки у заказчика
-    public List<WorkRequestViewDto> getClientOpenRequestsForView(String email) {
+    public List<WorkRequestViewDto> getClientRequestsForView(String email) {
         ClientOrg clientOrg = clientOrgRepository.findByUser_Email(email)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Организация не найдена"));
@@ -183,18 +202,20 @@ public class WorkRequestService {
                     long closed = workRequestRepository
                             .countByClientOrg_IdAndStatus(
                                     org.getId(),
-                                    RequestStatus.CLOSED
+                                    WorkRequestStatus.CLOSED
                             );
 
-                    long total = workRequestRepository
-                            .countByClientOrg_Id(org.getId());
+                    long expired = workRequestRepository.
+                            countByClientOrg_IdAndStatus(
+                                    org.getId(),
+                                    WorkRequestStatus.EXPIRED);
 
                     return new ManagerOrganizationStatsDto(
                             org.getId(),
                             org.getName(),
                             org.getAddress(),
                             closed,
-                            total - closed
+                            expired
                     );
                 })
                 .toList();
@@ -207,12 +228,12 @@ public class WorkRequestService {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Заявка не найдена"));
 
-        if (request.getStatus() != RequestStatus.AGREED) {
+        if (request.getStatus() != WorkRequestStatus.AGREED) {
             throw new IllegalStateException(
                     "Завершить можно только согласованную заявку");
         }
 
-        request.setStatus(RequestStatus.CLOSED);
+        request.setStatus(WorkRequestStatus.CLOSED);
         workRequestRepository.save(request);
     }
 
@@ -222,15 +243,14 @@ public class WorkRequestService {
                 .orElseThrow(() ->
                         new IllegalArgumentException("Заявка не найдена"));
 
-        if (request.getStatus() == RequestStatus.CLOSED
-                || request.getStatus() == RequestStatus.EXPIRED
-                || request.getStatus() == RequestStatus.CANCELLED) {
+        if (request.getStatus() == WorkRequestStatus.CLOSED
+                || request.getStatus() == WorkRequestStatus.EXPIRED
+                || request.getStatus() == WorkRequestStatus.CANCELLED) {
             throw new IllegalStateException(
                     "Эту заявку уже нельзя отменить");
         }
 
-        request.setStatus(RequestStatus.CANCELLED);
+        request.setStatus(WorkRequestStatus.CANCELLED);
         workRequestRepository.save(request);
     }
-
 }

@@ -116,7 +116,7 @@ public class ClientOrgController {
     ) {
         model.addAttribute(
                 "organizations",
-                tariffService.searchOrganizations(address)
+                clientOrgService.searchOrganizations(address)
         );
 
         model.addAttribute("address", address);

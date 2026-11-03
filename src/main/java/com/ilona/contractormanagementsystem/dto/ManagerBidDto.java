@@ -1,6 +1,6 @@
 package com.ilona.contractormanagementsystem.dto;
 
-import com.ilona.contractormanagementsystem.enam.BidStatus;
+import com.ilona.contractormanagementsystem.entity.BidStatus;
 
 public record ManagerBidDto(
         String contractorEmail,
